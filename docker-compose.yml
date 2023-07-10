@@ -1,0 +1,25 @@
+services:
+  postgres:
+    image: postgres:15
+    restart: always
+    env_file:
+      - ./compose/.envs/.postgres
+    volumes:
+      - postgresql_data:/var/lib/postgresql/data
+      - ./compose/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  pgbouncer:
+    image: bitnami/pgbouncer
+    restart: always
+    depends_on:
+      - postgres
+    env_file:
+      - ./compose/.envs/.pgbouncer
+    ports:
+      - '6432:6432'
+    volumes:
+      - ./compose/pgbouncer/userlist.txt:/bitnami/pgbouncer/userlist.txt
+      - ./compose/pgbouncer/pgbouncer.ini:/bitnami/pgbouncer/conf/pgbouncer.ini
+
+volumes:
+  postgresql_data:
