@@ -72,7 +72,8 @@ cat <<<$PGBOUNCER_INI_FILE_CONTENT >compose/pgbouncer/pgbouncer.ini
 
 echo "Generating pgbouncer userlist file..."
 
-md5sum <<<$PGPASSWORD$PGUSER | awk '{print $1}' >compose/pgbouncer/userlist.txt
+
+printf '%s' $PGPASSWORD$PGUSER | md5sum | awk '{print $1}' >compose/pgbouncer/userlist.txt
 
 md5password=$(cat compose/pgbouncer/userlist.txt)
 
