@@ -8,7 +8,7 @@ services:
       - postgresql_data:/var/lib/postgresql/data
       - ./compose/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
-      test: [ "CMD", "pg_isready", "-U", "", "-d", ""]
+      test: [ "CMD", "pg_isready", "-U", "", "-d", "" ]
       interval: 10s
       timeout: 5s
       retries: 3
@@ -26,6 +26,16 @@ services:
     volumes:
       - ./compose/pgbouncer/userlist.txt:/bitnami/pgbouncer/userlist.txt
       - ./compose/pgbouncer/pgbouncer.ini:/bitnami/pgbouncer/conf/pgbouncer.ini
+
+  pgwatch:
+    image: cybertec/pgwatch2
+    restart: always
+    depends_on:
+      - postgres
+      - pgbouncer
+    ports:
+      - '8080:8080'
+      - '3000:3000'
 
 volumes:
   postgresql_data:
