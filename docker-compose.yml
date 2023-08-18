@@ -7,8 +7,10 @@ services:
     volumes:
       - postgresql_data:/var/lib/postgresql/data
       - ./compose/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - '5434:5432'
     healthcheck:
-      test: [ "CMD", "pg_isready", "-U", "", "-d", "" ]
+      test: [ "CMD", "pg_isready", "-U", "myuser", "-d", "mydb" ]
       interval: 10s
       timeout: 5s
       retries: 3
@@ -28,7 +30,7 @@ services:
       - ./compose/pgbouncer/pgbouncer.ini:/bitnami/pgbouncer/conf/pgbouncer.ini
 
   pgwatch:
-    image: cybertec/pgwatch2
+    image: cybertec/pgwatch2-postgres
     restart: always
     depends_on:
       - postgres
@@ -36,6 +38,13 @@ services:
     ports:
       - '8080:8080'
       - '3000:3000'
+  
+  pgbackups3:
+    image: schickling/postgres-backup-s3
+    links:
+      - postgres
+    env_file:
+      - ./compose/.envs/.pgbackups
 
 volumes:
   postgresql_data:
