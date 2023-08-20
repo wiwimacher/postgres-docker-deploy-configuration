@@ -8,7 +8,7 @@ services:
       - postgresql_data:/var/lib/postgresql/data
       - ./compose/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
-      - '5434:5432'
+      - '5432:5432'
     healthcheck:
       test: [ "CMD", "pg_isready", "-U", "myuser", "-d", "mydb" ]
       interval: 10s
@@ -41,6 +41,7 @@ services:
   
   pgbackups3:
     image: schickling/postgres-backup-s3
+    restart: always
     links:
       - postgres
     env_file:
